@@ -12,10 +12,9 @@ import { AppService } from './app.service';
   imports: [
     TaskModule,
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(
-      `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.i7ia4sr.mongodb.net/?retryWrites=true&w=majority`,
-      { dbName: 'task-menager' },
-    ),
+    MongooseModule.forRoot(`${process.env.MONGO_URI}`, {
+      dbName: 'task-menager',
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
