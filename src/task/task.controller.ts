@@ -17,12 +17,12 @@ import { TaskService } from './task.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
-import { JwtAuthGuard } from 'src/utils/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { JwtAuthGuard } from '../utils/guards/jwt-auth.guard';
+import { RolesGuard } from '../utils/guards/roles.guard';
 
-import { Roles } from 'src/utils/decorators/roles.decorator';
+import { Roles } from '../utils/decorators/roles.decorator';
 
-import { ROLE } from 'src/users/types/user.types';
+import { ROLE } from '../users/types/user.types';
 import { Task } from './entity/task.entity';
 
 @ApiTags('task')
