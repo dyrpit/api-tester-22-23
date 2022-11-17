@@ -5,13 +5,14 @@ import {
   IsBoolean,
   IsArray,
   IsEnum,
-  IsDateString,
+  IsOptional,
 } from 'class-validator';
+
 import { PRIORITY } from '../types/task.type';
 
 export class CreateTaskDto {
   @ApiProperty({
-    description: 'Task title/description',
+    description: 'Task title',
   })
   @IsString()
   @IsNotEmpty()
@@ -29,20 +30,15 @@ export class CreateTaskDto {
     enum: PRIORITY,
     default: PRIORITY.LOW,
   })
+  @IsOptional()
   @IsEnum(PRIORITY)
   priority?: PRIORITY;
 
   @ApiPropertyOptional({
     description: 'Task category tag',
-    default: 'general',
+    default: ['general'],
   })
+  @IsOptional()
   @IsArray()
   category?: string[];
-
-  @ApiProperty({
-    description: 'Task creation date',
-    default: Date.now(),
-  })
-  @IsDateString()
-  creationDate?: Date;
 }

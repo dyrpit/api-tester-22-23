@@ -1,4 +1,8 @@
+import mongoose from 'mongoose';
+
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+
+import { User } from 'src/users/entity/user.entity';
 
 import { PRIORITY } from '../types/task.type';
 
@@ -15,11 +19,17 @@ export class Task {
   @Prop({ enum: PRIORITY, default: PRIORITY.LOW })
   priority: PRIORITY;
 
-  @Prop([String])
+  @Prop({ default: ['general'] })
   category: string[];
 
-  @Prop()
+  @Prop({ default: new Date() })
   creationDate: Date;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  userId: User;
 }
 
-export const TaskSchema = SchemaFactory.createForClass(Task);
+export const TaskSchema = SchemaFactory.createForClass(Task).set(
+  'versionKey',
+  false,
+);

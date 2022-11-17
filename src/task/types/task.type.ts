@@ -3,3 +3,7 @@ export enum PRIORITY {
   MEDIUM = 'medium',
   HIGH = 'high',
 }
+
+export interface QueryFilter {
+  userId?: string;
+}

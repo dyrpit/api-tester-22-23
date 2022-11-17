@@ -1,51 +1,131 @@
-import { Controller, Get, Post, Body, HttpStatus, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  HttpStatus,
+  Param,
+  Patch,
+  Delete,
+  UseGuards,
+  Request,
+} from '@nestjs/common';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { TaskService } from './task.service';
 
-import { CreateTaskDto } from './dto/task.dto';
+import { CreateTaskDto } from './dto/create-task.dto';
+import { UpdateTaskDto } from './dto/update-task.dto';
+
+import { JwtAuthGuard } from 'src/utils/guards/jwt-auth.guard';
+import { RolesGuard } from 'src/utils/guards/roles.guard';
+
+import { Roles } from 'src/utils/decorators/roles.decorator';
+
+import { ROLE } from 'src/users/types/user.types';
+import { Task } from './entity/task.entity';
 
 @ApiTags('task')
 @Controller('task')
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class TaskController {
   constructor(private readonly taskService: TaskService) {}
 
+  @Roles(ROLE.ADMIN, ROLE.USER)
   @Get()
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'All tasks list',
+    description: 'Returns tasks list, depend on user role',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Could not get tasks list',
+    description: 'Could not find any tasks',
   })
-  findAll() {
-    return this.taskService.findAll();
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  findAll(@Request() req): Promise<Task[]> {
+    const queryFilter =
+      req?.user?.role === ROLE.USER
+        ? { userId: req.user.userId as string }
+        : {};
+    return this.taskService.findAll(queryFilter);
   }
 
+  @Roles(ROLE.USER, ROLE.ADMIN)
   @Get(':id')
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Task with given ID',
+    description: 'Returns task with given ID',
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
-    description: 'Wrong ID, cannot get task',
+    description: 'Incorrect task ID, cannot get task',
   })
-  findOne(@Param('id') id: string) {
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  findOne(@Param('id') id: string): Promise<Task> {
     return this.taskService.findOne(id);
   }
 
+  @Roles(ROLE.USER, ROLE.ADMIN)
   @Post()
   @ApiResponse({
     status: HttpStatus.CREATED,
-    description: 'New task successfully created',
+    description: 'Returns newly created task, new task successfully created',
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
-    description: 'Wrong input data, cannot create task',
+    description: 'Incorecct input data, cannot create task',
   })
-  create(@Body() createTaskdto: CreateTaskDto) {
-    return this.taskService.create(createTaskdto);
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  create(@Body() createTaskDto: CreateTaskDto, @Request() req): Promise<Task> {
+    const userId = req.user.userId as string;
+    return this.taskService.create(createTaskDto, userId);
+  }
+
+  @Roles(ROLE.USER, ROLE.ADMIN)
+  @Patch(':id')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns udpated task, task successfully updated',
+  })
+  @ApiResponse({
+    status: HttpStatus.BAD_REQUEST,
+    description: 'Incorrect input data, cannot update task',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  update(
+    @Body() updateTaskDto: UpdateTaskDto,
+    @Param('id') id: string,
+  ): Promise<Task> {
+    return this.taskService.updateTask(updateTaskDto, id);
+  }
+
+  @Roles(ROLE.USER, ROLE.ADMIN)
+  @Delete(':id')
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Returns removed task, task successfully removed',
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Incorrect ID, cannot remove task',
+  })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: 'Unauthorized',
+  })
+  delete(@Param('id') id: string): Promise<Task> {
+    return this.taskService.deleteTask(id);
   }
 }
