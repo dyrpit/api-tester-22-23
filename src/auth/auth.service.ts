@@ -3,10 +3,10 @@ import * as bcrypt from 'bcrypt';
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { UsersService } from 'src/users/users.service';
+import { UsersService } from '../users/users.service';
 
 import { IAccessToken } from './types/auth.types';
-import { SanitizedUser } from 'src/users/types/user.types';
+import { SanitizedUser } from '../users/types/user.types';
 
 @Injectable()
 export class AuthService {

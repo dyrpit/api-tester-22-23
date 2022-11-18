@@ -12,15 +12,15 @@ import { ApiResponse } from '@nestjs/swagger';
 
 import { UsersService } from './users.service';
 
-import { JwtAuthGuard } from 'src/utils/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/utils/guards/roles.guard';
+import { JwtAuthGuard } from '../utils/guards/jwt-auth.guard';
+import { RolesGuard } from '../utils/guards/roles.guard';
 
 import { User } from './entity/user.entity';
 
-import { RegisterUserDto } from 'src/users/dto/create-user.dto';
+import { RegisterUserDto } from './dto/create-user.dto';
 import { FindUserDto } from './dto/find-user.dto';
 
-import { Roles } from 'src/utils/decorators/roles.decorator';
+import { Roles } from '../utils/decorators/roles.decorator';
 
 import { ROLE, SanitizedUser } from './types/user.types';
 

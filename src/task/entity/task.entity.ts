@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-import { User } from 'src/users/entity/user.entity';
+import { User } from '../../users/entity/user.entity';
 
 import { PRIORITY } from '../types/task.type';
 

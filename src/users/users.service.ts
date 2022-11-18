@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { RegisterUserDto } from 'src/users/dto/create-user.dto';
+import { RegisterUserDto } from './dto/create-user.dto';
 
 import { User, UserDocument } from './entity/user.entity';
 
