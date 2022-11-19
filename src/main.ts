@@ -11,7 +11,6 @@ async function bootstrap() {
     .setTitle('Task manager')
     .setDescription('Task manager API for managing daily tasks')
     .setVersion('1.0')
-    .addTag('tasks')
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
