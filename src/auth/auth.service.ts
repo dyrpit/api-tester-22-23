@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 
 import { IAccessToken } from './types/auth.types';
-import { SanitizedUser } from '../users/types/user.types';
+import { SanitizedUserType } from '../users/types/user.types';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +18,7 @@ export class AuthService {
   async validateUser(
     email: string,
     password: string,
-  ): Promise<SanitizedUser | null> {
+  ): Promise<SanitizedUserType | null> {
     const user = await this.usersService.findByEmail(email);
 
     if (user && bcrypt.compareSync(password, user.password)) {
@@ -29,7 +29,7 @@ export class AuthService {
     return null;
   }
 
-  async login(user: SanitizedUser): Promise<IAccessToken> {
+  async login(user: SanitizedUserType): Promise<IAccessToken> {
     const payload = {
       email: user.email,
       id: user._id.toString(),
