@@ -4,10 +4,11 @@ import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
 import { RegisterUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 import { User, UserDocument } from './entity/user.entity';
 
-import { ROLE, SanitizedUser } from './types/user.types';
+import { ROLE, SanitizedUserType } from './types/user.types';
 
 @Injectable()
 export class UsersService {
@@ -40,6 +41,17 @@ export class UsersService {
     }
   }
 
+  async deleteUser(id: string): Promise<User> {
+    try {
+      return this.userModel.findByIdAndDelete(id);
+    } catch (e) {
+      throw new HttpException(
+        `Could not delete task with ID ${id}`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+
   async findAll(): Promise<User[]> {
     return this.userModel.find({});
   }
@@ -50,7 +62,14 @@ export class UsersService {
 
   async findOne(id: string): Promise<User> {
     try {
-      return this.userModel.findById(id);
+      const user = await this.userModel.findById(id);
+      if (!user) {
+        throw new HttpException(
+          `User with ID ${id} not found`,
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      return user;
     } catch (e) {
       throw new HttpException(
         `User with ID ${id} not found`,
@@ -59,7 +78,27 @@ export class UsersService {
     }
   }
 
-  getProfile(req: any): SanitizedUser {
+  getProfile(req: any): SanitizedUserType {
     return req.user;
+  }
+
+  async updateUser(data: UpdateUserDto, id: string): Promise<User> {
+    const { password, role } = data;
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, this.saltRounds);
+      data = { ...data, password: hashedPassword };
+    }
+
+    try {
+      return this.userModel.findByIdAndUpdate(id, data, {
+        returnDocument: 'after',
+      });
+    } catch (e) {
+      throw new HttpException(
+        `Could not update task with ID ${id}`,
+        HttpStatus.BAD_REQUEST,
+      );
+    }
   }
 }

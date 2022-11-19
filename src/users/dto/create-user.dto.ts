@@ -26,6 +26,8 @@ export class RegisterUserDto {
 
   @ApiPropertyOptional({
     description: 'User role, if not specified deafult value will be "user"',
+    enum: ROLE,
+    default: ROLE.USER,
   })
   @IsOptional()
   @IsEnum(ROLE)
