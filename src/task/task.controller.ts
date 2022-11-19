@@ -10,7 +10,7 @@ import {
   UseGuards,
   Request,
 } from '@nestjs/common';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { TaskService } from './task.service';
 
@@ -26,6 +26,11 @@ import { ROLE } from '../users/types/user.types';
 import { Task } from './entity/task.entity';
 
 @ApiTags('task')
+@ApiHeader({
+  name: 'Authorization',
+  description: 'Bearer token',
+  required: true,
+})
 @Controller('task')
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class TaskController {
@@ -35,7 +40,8 @@ export class TaskController {
   @Get()
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Returns tasks list, depend on user role',
+    description: 'Returns tasks list, depends on user role',
+    type: [Task],
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -58,6 +64,7 @@ export class TaskController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns task with given ID',
+    type: Task,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
@@ -76,6 +83,7 @@ export class TaskController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'Returns newly created task, new task successfully created',
+    type: Task,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -95,6 +103,7 @@ export class TaskController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns udpated task, task successfully updated',
+    type: Task,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -116,6 +125,7 @@ export class TaskController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Returns removed task, task successfully removed',
+    type: Task,
   })
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
